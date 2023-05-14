@@ -3,6 +3,8 @@ const User = require('../models/userModel');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const dotenv = require('dotenv').config();
+const cookie = require('cookie');
+const axios = require('axios');
 
 // @desc Register User
 // @route POST /api/users/register
@@ -30,12 +32,11 @@ const registerUser = asyncHandler(async (req, res) => {
 
   console.log(`User is ${user}`);
   if (user) {
-    res.status(201).json({ _id: user.id, email: user.email });
+    res.status(201).redirect('/');
   } else {
     res.status(400);
     throw new Error('User data not valid');
   }
-
   res.json({ message: 'Register the user' });
 });
 
@@ -61,8 +62,9 @@ const loginUser = asyncHandler(async (req, res) => {
         },
       },
       process.env.ACCESS_TOKEN_SECRET,
-      { expiresIn: '15m' }
+      { expiresIn: '24h' }
     );
+    // document.cookie = `accessToken=${accessToken}; path=/;`;
     res.status(200).json({ accessToken }); // Send the token in the response
   } else {
     res.status(401);
